@@ -1,5 +1,5 @@
 #!/bin/sh
-cd /home/pi/cgm-remote-monitor
+cd /home/ubuntu/ns/cgm-remote-monitor
 
 # See https://github.com/nightscout/cgm-remote-monitor#environment for a description of the fields
 # Required by Nightscout, please edit

@@ -17,10 +17,10 @@ fi
 
 export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games
 
-DAEMON_PATH="/home/pi/cgm-remote-monitor"
+DAEMON_PATH="/home/ubuntu/ns/cgm-remote-monitor"
 
 DAEMON=/usr/bin/sudo
-DAEMONOPTS="-u pi /home/pi/start_nightscout.sh"
+DAEMONOPTS="-u ubuntu /home/ubuntu/ns/start_nightscout.sh"
 NAME=nightscout
 DESC="nightscout pi local script"
 PIDFILE=/var/run/$NAME.pid
@@ -74,4 +74,4 @@ restart)
     exit 1
 esac
 
-exit 0           
+exit 0
