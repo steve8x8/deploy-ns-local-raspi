@@ -125,8 +125,8 @@ if [[ -z "$INSTALL_MONGO" || -z "$UNITS" || -z "$STORAGE" || -z "$INSTALL_OREF0"
     done
 
     echo "Nightscout has two options for storage:"
-    echo "openaps: Nightscout will use the OpenAPS files"
     echo "mongodb: Nightscout will use a MongoDB"
+    echo "openaps: Nightscout will use the OpenAPS files"
     while true; do
 	read -p "What storage do you want to use? Choose [mongodb] / openaps " storage
 	case $storage in
@@ -149,12 +149,14 @@ if [[ -z "$INSTALL_MONGO" || -z "$UNITS" || -z "$STORAGE" || -z "$INSTALL_OREF0"
 
 fi
 
+echo Starting installation with INSTALL_MONGO=${INSTALL_MONGO} UNITS=${UNITS} STORAGE=${STORAGE} INSTALL_OREF0=${INSTALL_OREF0}
+sleep 5
+
 # install dependencies 
-# get git, mongodb community edition, and npm
 # optional extra packages to easily debug stuff or to do better maintenance
 EXTRAS="etckeeper tcsh lsof"
 EXTRAS=""
-sudo apt-get install --assume-yes git npm ${EXTRAS}
+sudo apt-get install --assume-yes git ${EXTRAS}
 
 if [[ ${INSTALL_MONGO,,} =~ "yes" || ${INSTALL_MONGO,,} =~ "y"  ]]
 then
