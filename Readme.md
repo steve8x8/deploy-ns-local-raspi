@@ -12,18 +12,25 @@ __Tested with:__
 
 __ToDo:__
 
- * Use my.env if provided (e.g., from a ns.10be.de DB backup)
- * More tests (RasPi 4, anyone?)
+ * DB name/user/password
+ * import data into DB (from path given)
+ * use (and convert) my.env if provided (e.g., from a ns.10be.de DB backup)
+ * reverse proxy, SSL certificate
+ * systemd integration, proper start/stop
+ * setup config file? or edit script itself? command line args?
+ * more tests (RasPi 4, anyone?)
 
 __Prerequisites:__
 
--1. Starting with version 4, the RasPi must be updated with the latest (Raspbian-provided) firmware, see
+ -1. Starting with version 4, the RasPi must be updated with the latest (Raspbian-provided) firmware, see
 	https://jamesachambers.com/raspberry-pi-4-bootloader-firmware-updating-recovery-guide/
 
  0. Install Raspberry Pi SD card (minimum 4 GB) with Debian Ubuntu "Bionic", ready for RasPi 4B from
 	https://jamesachambers.com/raspberry-pi-4-ubuntu-server-desktop-18-04-3-image-unofficial/
 
-   At the time of this writing, Version 18.04.4 was provided.
+   At the time of this writing, Version 28 (18.04.4) was provided. Check for updates at
+	https://github.com/TheRemote/Ubuntu-Server-raspi4-unofficial/releases
+
    This comes as a server-only image; addition of desktop is possible, see James's instructions.
    You may require a bigger SD card, 8 or 16 GB.
 
@@ -34,14 +41,14 @@ __Prerequisites:__
 
    `$ sudo raspi-config`
     ```
-    1. Expand Filesystem   ==> Make use of the whole SD card
-    2. Change User Password (and remember the new setting)
-    3. Bootoptions ==> Choose what you want
-    4. Wait for Network at Boot ==> Set to No
-    5. Internationalisation Options => Change Locale, Timezone, Keyboard Layout, Wi-Fi country to your needs
-    7. Advanced Options
-	A2. Hostname ==> Set your hostname. This will be used for the URL of your Nightscout
-	A4. SSH ==> Enable SSH for remote access
+    1 Expand Filesystem   ==> Make use of the whole SD card
+    2 Change User Password (and remember the new setting)
+    3 Bootoptions ==> Choose what you want
+    4 Wait for Network at Boot ==> Set to No
+    5 Internationalisation Options => Change Locale, Timezone, Keyboard Layout, Wi-Fi country to your needs
+    7 Advanced Options
+	A2 Hostname ==> Set your hostname. This will be used for the URL of your Nightscout
+	A4 SSH ==> Enable SSH for remote access
     ```
    then reboot
  
@@ -125,13 +132,11 @@ __Changelog:__
 2020-03-04:
 
 - some tweaks, in-place substitutions, etc.
-- ToDo: reverse proxy, ssl certificate, systemd integration
 
 2020-03-03:
 
 - initially adopted by steve8x8, for use with RasPi 3B and up, running 64-bit Ubuntu Bionic
 - use Node from APT, Mongo from mongodb.org
-- ToDo: check whether n is required at all; use/convert my.env; do we need oref0?; interactive defaults
 
 2016-11-13:
 
