@@ -7,7 +7,8 @@ This script can either:
 
 __Tested with:__
 
- * Raspberry Pi 3B+ (rpi3b+)
+ * Raspberry Pi 3B+ (1GB RAM, 2GB swapfile)
+ * Raspberry Pi 3B  (1GB RAM, no install, using same SDcard instead)
 
 __ToDo:__
 
@@ -87,7 +88,7 @@ __Usage:__
     bash ns-local-install.sh
     ```
 	answer a few questions, then
-	relax and drink some :coffee: - script runtime is *more than one hour on a RasPi 3B+*.
+	relax and drink some :coffee: - script runtime is *more than 30 minutes on a RasPi 3B+*.
 
 	You can also use a non-interactive install:
     ```
@@ -124,6 +125,7 @@ __Changelog:__
 2020-03-04:
 
 - some tweaks, in-place substitutions, etc.
+- ToDo: reverse proxy, ssl certificate, systemd integration
 
 2020-03-03:
 
@@ -152,6 +154,12 @@ __With help from:__
 - http://yannickloriot.com/2016/04/install-mongodb-and-node-js-on-a-raspberry-pi/
 - https://www.einplatinencomputer.com/raspberry-pi-node-js-installieren/
 - contributions from PieterGit
+
+__More stuff found at:__
+- https://github.com/schmitzn/howto-nightscout-linux
+- https://github.com/viderehh/deploy-nightscout-local-debain (sic!)
+- https://gist.github.com/frauzufall/c69f4a76730e3eb24e7a582d636765df/
+- https://gist.github.com/tamoyal/10441108/
 
 __Wishlist/To Do:__
 - separate username/password for Mongo
