@@ -84,50 +84,43 @@ __Usage:__
     mkdir -p ~/ns
     cd ~/ns
     ```
+    You may place there:
+    - a `*.tar` file with a DB backup which may contain a `my.env` file
+    - a `my.env` file to override the backup one and the automatically generated entries,
+    e.g. setting new values for
+    ```
+    CUSTOM_TITLE=mysitename_without_spaces
+    API_SECRET=my_12_characters_or_more_password
+    ```
+    Do not touch PORT or HOSTNAME!
+    - ...
+
      Then
     ```
     git clone https://github.com/steve8x8/deploy-ns-local-raspi.git
     cd deploy-ns-local-raspi
     git checkout arm64-ubuntu-bionic
+    bash ns-local-install.sh fully-qualified-host-name
     ```
-     and run ns-local-install script for an interactive install:
-    ```
-    bash ns-local-install.sh
-    ```
-	answer a few questions, then
-	relax and drink some :coffee: - script runtime is *more than 30 minutes on a RasPi 3B+*.
+     Now relax and drink some :coffee: - script runtime is *more than 30 minutes on a RasPi 3B(+)*.
 
-	You can also use a non-interactive install:
-    ```
-    bash ns-local-install.sh [--mongo=[yes|no]] [--units=[mmol|mg]] [--storage=[mongodb|openaps]] [--oref0=[no|yes]]
-    ```
-	For example: 
-    ```
-    bash ns-local-install.sh --mongo=yes --units=mmol --storage=mongo --oref0=no
-    ```
-	(which is the default behaviour)
-
- 2. after running the script you will have a running nightscout local installation. Now open editor with your config for nightscout:
-    `nano ~/ns/start-nightscout.sh` (or `vi` or `mcedit` or ...)
-
-    You need to configure at least the lines close to the top of the file:
-    ```
-    CUSTOM_TITLE=mysitename_without_spaces
-    API_SECRET=my_12_characters_or_more_password
-    ```
-    Put your personal password (at least 12 characters long) and the name of your site (just for display) there!
+ 2. After running the script you will have a running nightscout local installation, with all bells and whistles.
  
- 3. once finished, restart nightscout with: `sudo /etc/init.d/nightscout stop && sudo /etc/init.d/nightscout start` or reboot
- 4. navigate to http://192.168.10.4:1337/ complete nightscout profile settings
+ 3. once finished, restart nightscout with: `sudo service nightscout restart` or reboot
+ 4. navigate to http://your.host.name:1337/ for local access, e.g. complete nightscout profile settings
  5. Have fun :smiley:
 
 __Troubleshooting:__
 
- * nodejs manual start: `ubuntu@raspi:~/ns/cgm-remote-monitor $ ../start-nightscout.sh` (must be in cgm-remote-monitor directory)
+ * nodejs manual start: `ubuntu@raspi:~/ns/cgm-remote-monitor $ ../start.sh` (must be in cgm-remote-monitor directory)
  * nodejs / nightscout log: check `cat /var/log/nightscout.log`
  * mongodb: check `cat /var/log/mongodb/mongod.log` should contain: `[listener] waiting for connections on port 27017`
 
 __Changelog:__
+
+2020-03-06:
+
+- convert to systemd, multiple input files, ...
 
 2020-03-04:
 

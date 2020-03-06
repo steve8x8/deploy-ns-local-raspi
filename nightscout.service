@@ -1,0 +1,11 @@
+[Unit]
+Description=Nightscout Service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=XXXNSHOMEXXX/cgm-remote-monitor
+ExecStart=XXXNSHOMEXXX/cgm-remote-monitor/../start.sh
+
+[Install]
+WantedBy=multi-user.target
