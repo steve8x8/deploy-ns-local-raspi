@@ -61,7 +61,7 @@ then
     echo "Will use ${NSHOME}/my.env to override some settings"
 fi
 
-echo "Starting installation now ... take a seat and watch :)"
+read -p "Starting installation now ... take a seat and watch :) ... press ENTER before" x
 sleep 5
 
 
@@ -80,28 +80,28 @@ wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc \
 | sudo apt-key add -
 echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" \
 | sudo tee /etc/apt/sources.list.d/mongodb-org-4.2.list
-sudo apt-get update
+sudo apt-get update -qq
 sudo apt-get install mongodb-org -y
 # enable mongo
 sudo systemctl enable mongod.service
+# restart just in case
+sudo systemctl stop   mongod.service
+sudo systemctl start  mongod.service
 # check mongo status
 sudo systemctl status mongod.service
-# restart just in case
-sudo systemctl restart mongod.service
 # get log of mongo
 sudo tail -n10  /var/log/mongodb/mongod.log
 #sudo grep "port 27017" /var/log/mongodb/mongod.log
 echo "log should contain a fresh record: [listener] waiting for connections on port 27017"
 # set some initial user privileges
-mongo << EOF
+mongo -shell << EOF
 use nightscout
 db.createUser({ user: 'nightscout', pwd: 'WeAreNotWaiting', roles: [{ role: 'readWrite', db:'nightscout'}] })
 exit
 EOF
 # and limit access
+grep -q '^security:' /etc/mongod.conf || \
 sudo ed /etc/mongod.conf <<EOF
-g/^security:/d
-1
 /^#security:/
 a
 security:
@@ -115,15 +115,15 @@ EOF
 if [ -n "${BACKUP}" ]
 then
     TEMP=$(mktemp -d ${NSHOME}/untarXXXXXX)
+    echo Using ${TEMP} to unpack tar
     cd ${TEMP}
-    tar xf ${NSHOME}/${BACKUP}
+    tar xvf ${NSHOME}/${BACKUP}
     find . -type f \
     | while read f
     do
 	mv $f ./
     done
     cp -pi my.env ${NSHOME}/backup.env
-    cd ${NSHOME}
     mongorestore -u nightscout -p WeAreNotWaiting -d nightscout ${TEMP}/
     rm -rf ${TEMP}
 fi
