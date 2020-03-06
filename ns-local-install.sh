@@ -93,6 +93,26 @@ sudo systemctl status mongod.service
 sudo tail -n10  /var/log/mongodb/mongod.log
 #sudo grep "port 27017" /var/log/mongodb/mongod.log
 echo "log should contain a fresh record: [listener] waiting for connections on port 27017"
+
+# replay database backup
+if [ -n "${BACKUP}" ]
+then
+    TEMP=$(mktemp -d ${NSHOME}/untarXXXXXX)
+    echo Using ${TEMP} to unpack tar
+    pushd ${TEMP}
+    tar xvf ${NSHOME}/${BACKUP}
+    find . -type f \
+    | while read f
+    do
+	mv $f ./
+    done
+    cp -pi my.env ${NSHOME}/backup.env
+    popd
+#    mongorestore -u nightscout -p WeAreNotWaiting -d nightscout ${TEMP}/
+    mongorestore -d nightscout ${TEMP}/
+    rm -rf ${TEMP}
+fi
+
 # set some initial user privileges
 mongo -shell << EOF
 use nightscout
@@ -110,23 +130,6 @@ security:
 w
 q
 EOF
-
-# replay database backup
-if [ -n "${BACKUP}" ]
-then
-    TEMP=$(mktemp -d ${NSHOME}/untarXXXXXX)
-    echo Using ${TEMP} to unpack tar
-    cd ${TEMP}
-    tar xvf ${NSHOME}/${BACKUP}
-    find . -type f \
-    | while read f
-    do
-	mv $f ./
-    done
-    cp -pi my.env ${NSHOME}/backup.env
-    mongorestore -u nightscout -p WeAreNotWaiting -d nightscout ${TEMP}/
-    rm -rf ${TEMP}
-fi
 
 ## MongoDB is done!
 
