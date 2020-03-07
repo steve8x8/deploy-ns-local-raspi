@@ -12,14 +12,14 @@ __Tested with:__
 
 __ToDo:__
 
- * DB name/user/password
- * import data into DB (from path given)
- * use (and convert) my.env if provided (e.g., from a ns.10be.de DB backup)
  * reverse proxy, SSL certificate
- * systemd integration, proper start/stop
- * setup config file? or edit script itself? command line args?
  * more tests (RasPi 4, anyone?)
 
+__Notes:__
+
+ Some steps require a deeper knowledge of Linux and/or your "everyday OS". Those are marked with a (+).
+ No further explanations will be given. Ask your favourite search engine, or a real person you can trust.
+ 
 __Prerequisites:__
 
  -1. Starting with version 4, the RasPi must be updated with the latest (Raspbian-provided) firmware, see
@@ -36,36 +36,46 @@ __Prerequisites:__
 
 
  1. Configure your Raspberry Pi
-   Let RasPi boot up fully (`cloud-init` must have finished) before logging in.
+   Let RasPi always boot up fully (`cloud-init` must have finished) before logging in.
    Initial username: ubuntu Password: ubuntu
 
+   The initial keymap will be US! Do not use any special characters for the new password yet
+   unless you're 110% sure you will be able to enter it once the keymap has been adjusted!
+   Most alphabet characters (except qwzy) and numbers are safe.
+
    `$ sudo raspi-config`
-    ```
-    1 Expand Filesystem   ==> Make use of the whole SD card
-    2 Change User Password (and remember the new setting)
-    3 Bootoptions ==> Choose what you want
-    4 Wait for Network at Boot ==> Set to No
-    5 Internationalisation Options => Change Locale, Timezone, Keyboard Layout, Wi-Fi country to your needs
+```
+    1 Change User Password (and remember the new setting) if not yet done
+    2.N1 Hostname ==> set to "ns"
+    2.N3 Predictable interface names ==> set to "no"
+    3.B1, 3.B3 Boot options ==> Choose what you want
+    3.B2 Wait for Network at Boot ==> Set to No
+    4 Internationalisation Options => Change Locale, Timezone, Keyboard Layout, Wi-Fi country to your needs
+    4.I3 Keyboard layout ==> match your keyboard
+    5.P2 SSH ==> enable
     7 Advanced Options
-	A2 Hostname ==> Set your hostname. This will be used for the URL of your Nightscout
-	A4 SSH ==> Enable SSH for remote access
-    ```
-   then reboot
+    7.A1 Expand Filesystem   ==> Make use of the whole SD card (may be already done?)
+```
+   Select "Finish" to reboot
  
- 2. If you don't have DHCP, configure the network.
-    Pick up your IP address if you don't know it yet: `ip a`
+ 2. Some more adjustments.
+ 2.1. Network:
+     * Pick up your IP address if you don't know it yet: `ip a`
+     * If you don't have DHCP, configure the network. (+)
+ 2.2. Virtual memory:
+     * Check with "free", you will need 2500 MB at least.
+     * If necessary, add a swapfile. (+)
  
  3. Make sure your system is up to date:
-   `$ sudo apt-get update && sudo apt-get dist-upgrade -y`
+   `$ sudo apt-get update -qq && sudo apt-get dist-upgrade -y`
 
- 4. Tweak your Raspberry Pi.
+ 4. Optionally, tweak your Raspberry Pi.
     See for example: https://openaps.readthedocs.io/en/latest/docs/walkthrough/phase-0/rpi.html for information on setting up your Raspberry Pi:
-
- * Configure WiFi Settings
- * Wifi reliability tweaks [optional]
- * Watchdog [optional]
- * Disable HDMI to conserve power [optional]
- * Configure Bluetooth Low Energy tethering [optional]
+     * Configure WiFi Settings
+     * Wifi reliability tweaks [optional]
+     * Watchdog [optional]
+     * Disable HDMI to conserve power [optional]
+     * Configure Bluetooth Low Energy tethering [optional]
 
 __Caveat:__
 
@@ -80,43 +90,61 @@ __Usage:__
  1. Open console on your raspi, e.g., `ssh ubuntu@192.168.10.4` (you still remember the password you set before?).
 
     Create, and `cd` to, a working directory - `~/ns` will be used by the script.
+    It is recommended to keep your local copy of this deployment code there as well:
     ```
     mkdir -p ~/ns
     cd ~/ns
+    git clone -b arm64-ubuntu-bionic https://github.com/steve8x8/deploy-ns-local-raspi
     ```
     You may place there:
-    - a `*.tar` file with a DB backup which may contain a `my.env` file
+    - a `*.tar` file with a recent DB backup which may contain a `my.env` file
     - a `my.env` file to override the backup one and the automatically generated entries,
     e.g. setting new values for
     ```
+    HOSTNAME=ns.your_local_domain
     CUSTOM_TITLE=mysitename_without_spaces
     API_SECRET=my_12_characters_or_more_password
     ```
-    Do not touch PORT or HOSTNAME!
+    Do not touch PORT!
     - ...
 
      Then
     ```
-    git clone https://github.com/steve8x8/deploy-ns-local-raspi.git
-    cd deploy-ns-local-raspi
+    cd ~/ns/deploy-ns-local-raspi
     git checkout arm64-ubuntu-bionic
-    bash ns-local-install.sh fully-qualified-host-name
     ```
-     Now relax and drink some :coffee: - script runtime is *more than 30 minutes on a RasPi 3B(+)*.
+    
+     Now go through the individual steps:
+    ```
+    ./uninstall.sh
+    ./install.sh mongo
+    ./install.sh nightscout
+    ./install.sh restore
+    ./install.sh setup
+    ```
+     In particular the "nightscout" step will take *more than 30 minutes on a RasPi 3B(+)*.
 
- 2. After running the script you will have a running nightscout local installation, with all bells and whistles.
- 
- 3. once finished, restart nightscout with: `sudo service nightscout restart` or reboot
- 4. navigate to http://your.host.name:1337/ for local access, e.g. complete nightscout profile settings
- 5. Have fun :smiley:
+ 2. After running all steps you will have a running nightscout local installation.
+    Navigate to http://your.host.name:1337/ for local access, e.g. complete nightscout profile settings
+
+ 3. A reverse proxy (nginx) and HTTPS access (using a LetsEncrypt SSL Certificate) will be provided later,
+    their setup may have to be run on another machine (your web server if it exists).
+
+    How to provide external access is not subject of these instructions (+)
+
+ 4. Have fun :smiley:
 
 __Troubleshooting:__
 
+ * mongodb: check `cat /var/log/mongodb/mongod.log` should contain: `[listener] waiting for connections on port 27017`
  * nodejs manual start: `ubuntu@raspi:~/ns/cgm-remote-monitor $ ../start.sh` (must be in cgm-remote-monitor directory)
  * nodejs / nightscout log: check `cat /var/log/nightscout.log`
- * mongodb: check `cat /var/log/mongodb/mongod.log` should contain: `[listener] waiting for connections on port 27017`
 
 __Changelog:__
+
+2020-03-07:
+
+- split into separate install steps, more debugging
 
 2020-03-06:
 
