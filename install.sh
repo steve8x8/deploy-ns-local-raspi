@@ -110,9 +110,7 @@ then
 	mv $f ./
     done
 #    cp -pi my.env ${NSHOME}/backup.env
-#    cp -p my.env ${NSHOME}/backup.env
-    grep -v '^#' my.env | while read line; do if echo "$line" | grep -q '="'; then echo "$line" | sed 's~careportal~\
-careportal~g' | grep '"' | tr -d '\012'; echo ""; else echo "$line"; fi; done
+    cp -p my.env ${NSHOME}/backup.env
     popd
 #    mongorestore -u ${NSUSER} -p ${NSPASS} -d nightscout ${TEMP}/
     mongorestore -d nightscout ${TEMP}/
@@ -178,6 +176,9 @@ systemctl start  nightscout
 systemctl status nightscout
 
 
+# disabled for now - this must be split off (to be run on a web server)
+false && \
+{
 # nginx (johnmales)
 sudo apt-get install nginx -y
 sudo cp -p ${NSHOME}/nginx.avail   /etc/nginx/sites-available/default
@@ -192,7 +193,7 @@ sudo service nginx status
 sudo service nginx stop
 
 # letsencrypt (johnmales)
-sudo apt-get install letsencrypt python-certbot-nginx openssl
+sudo apt-get install letsencrypt python-certbot-nginx openssl -y
 sudo letsencrypt certonly <<< "#{NSFQDN}"
 sudo ls -lR /etc/letsencrypt/live
 sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
@@ -216,6 +217,7 @@ a
 w
 q
 EOF
+}
 
 echo "deploy nightscout on raspi done :)"
 echo "Nightscout logging can be found at: /var/log/nightscout.log"
