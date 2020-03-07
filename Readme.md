@@ -22,26 +22,26 @@ __Notes:__
  
 __Prerequisites:__
 
- -1. Starting with version 4, the RasPi must be updated with the latest (Raspbian-provided) firmware, see
+ X. Starting with version 4, the RasPi must be updated with the latest (Raspbian-provided) firmware, see
 	https://jamesachambers.com/raspberry-pi-4-bootloader-firmware-updating-recovery-guide/
 
  0. Install Raspberry Pi SD card (minimum 4 GB) with Debian Ubuntu "Bionic", ready for RasPi 4B from
 	https://jamesachambers.com/raspberry-pi-4-ubuntu-server-desktop-18-04-3-image-unofficial/
 
-   At the time of this writing, Version 28 (18.04.4) was provided. Check for updates at
+    At the time of this writing, Version 28 (18.04.4) was provided. Check for updates at
 	https://github.com/TheRemote/Ubuntu-Server-raspi4-unofficial/releases
 
-   This comes as a server-only image; addition of desktop is possible, see James's instructions.
-   You may require a bigger SD card, 8 or 16 GB.
+    This comes as a server-only image; addition of desktop is possible, see James's instructions.
+    You may require a bigger SD card, 8 or 16 GB.
 
 
  1. Configure your Raspberry Pi
-   Let RasPi always boot up fully (`cloud-init` must have finished) before logging in.
-   Initial username: ubuntu Password: ubuntu
+    Let RasPi always boot up fully (`cloud-init` must have finished) before logging in.
+    Initial username: `ubuntu` Password: `ubuntu`
 
-   The initial keymap will be US! Do not use any special characters for the new password yet
-   unless you're 110% sure you will be able to enter it once the keymap has been adjusted!
-   Most alphabet characters (except qwzy) and numbers are safe.
+    The initial keymap will be US! Do not use any special characters for the new password yet
+    unless you're 110% sure you will be able to enter it once the keymap has been adjusted!
+    Most alphabet characters (except qwzy) and numbers are safe.
 
    `$ sudo raspi-config`
 ```
@@ -56,16 +56,18 @@ __Prerequisites:__
     7 Advanced Options
     7.A1 Expand Filesystem   ==> Make use of the whole SD card (may be already done?)
 ```
-   Select "Finish" to reboot
- 
+    Select "Finish" to reboot
+
  2. Some more adjustments.
+
  2.1. Network:
      * Pick up your IP address if you don't know it yet: `ip a`
      * If you don't have DHCP, configure the network. (+)
+
  2.2. Virtual memory:
      * Check with "free", you will need 2500 MB at least.
      * If necessary, add a swapfile. (+)
- 
+
  3. Make sure your system is up to date:
    `$ sudo apt-get update -qq && sudo apt-get dist-upgrade -y`
 
@@ -87,7 +89,7 @@ __Usage:__
 
 (The following uses 192.168.10.4 as the IP address. You know yours, substitute it accordingly.)
 
- 1. Open console on your raspi, e.g., `ssh ubuntu@192.168.10.4` (you still remember the password you set before?).
+ 1. Open console on your RasPi, directly or via e.g., `ssh ubuntu@192.168.10.4` (you still remember the password you set before?).
 
     Create, and `cd` to, a working directory - `~/ns` will be used by the script.
     It is recommended to keep your local copy of this deployment code there as well:
@@ -113,16 +115,20 @@ __Usage:__
     cd ~/ns/deploy-ns-local-raspi
     git checkout arm64-ubuntu-bionic
     ```
-    
+
      Now go through the individual steps:
     ```
     ./uninstall.sh
-    ./install.sh mongo
+    ./install.sh mongodb
     ./install.sh nightscout
     ./install.sh restore
     ./install.sh setup
     ```
+    (You will get a list by running `./install.sh help`.)
+
      In particular the "nightscout" step will take *more than 30 minutes on a RasPi 3B(+)*.
+
+    _FIXME: Add detailed description of the individual steps._
 
  2. After running all steps you will have a running nightscout local installation.
     Navigate to http://your.host.name:1337/ for local access, e.g. complete nightscout profile settings

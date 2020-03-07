@@ -40,7 +40,7 @@ else
 fi
 
 echo Checking memory and swap...
-TOTAL_MB=$(free 2>/dev/null | awk '{s+=$2+0}END{print s+0}' | cut -d. -f1)
+TOTAL_MB=$(free 2>/dev/null | awk '{s+=$2+0}END{print (s+0)/1024}' | cut -d. -f1)
 if [ ${TOTAL_MB} -ge 2048 ]
 then
     echo "Memory looks sufficient (${TOTAL_MB} MiB found)."
@@ -59,7 +59,7 @@ sudo apt-get update -qq && \
 sudo apt-get upgrade -y -q && \
 sudo apt-get install git ed ${EXTRAS} -y -q
 
-if [ "${WHAT}" = "mongo" ]
+if [ "${WHAT}" = "mongo" -o "${WHAT}" = "mongodb" ]
 then
     echo =========================================
     echo === INSTALL MONGO DATABASE            ===
@@ -272,6 +272,20 @@ EOF
 fi
 
 }
+
+if [ "${WHAT}" = "help" ]
+then
+    cat <<EOF |
+$0 help              - this list
+$0 mongo|mongodb     - install MongoDB
+$0 ns|nightscout     - install NightScout (web monitor)
+$0 restore           - restore MongoDB from DB backup
+$0 setup             - finish and start NightScout installation
+#$0 nginx             - install reverse proxy
+#$0 cert [fqdn]       - install LetsEncrypt certificate
+EOF
+  grep -v '^#'
+fi
 
 time2=$(date +%s)
 
