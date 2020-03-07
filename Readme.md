@@ -19,7 +19,7 @@ __Notes:__
 
  Some steps require a deeper knowledge of Linux and/or your "everyday OS". Those are marked with a (+).
  No further explanations will be given. Ask your favourite search engine, or a real person you can trust.
- 
+
 __Prerequisites:__
 
  X. Starting with version 4, the RasPi must be updated with the latest (Raspbian-provided) firmware, see
@@ -116,17 +116,19 @@ __Usage:__
     git checkout arm64-ubuntu-bionic
     ```
 
-     Now go through the individual steps:
+     Now go through the individual steps, preferably in this order:
     ```
-    ./uninstall.sh
+    ./uninstall.sh         # only if there are remainders from previous attempts
+    ./install.sh prepare
     ./install.sh mongodb
     ./install.sh nightscout
     ./install.sh restore
     ./install.sh setup
     ```
-    (You will get a list by running `./install.sh help`.)
+    (You will get a comprehensive list of options by running `./install.sh help`.)
 
-     In particular the "nightscout" step will take *more than 30 minutes on a RasPi 3B(+)*.
+    Be prepared to wait - the "mongodb" and "nightscout" steps are rather time-consuming.
+     In particular the "nightscout" step will take *more than 30 minutes on a RasPi 3B+*.
 
     _FIXME: Add detailed description of the individual steps._
 
@@ -169,7 +171,7 @@ __Changelog:__
 
 - upgrade nightscout to 0.9.1-dev-20161112, in order to support openaps-storage, see https://github.com/nightscout/cgm-remote-monitor/pull/2114
 
-2016-10-14: 
+2016-10-14:
 
 - change to nightscout 0.9.0 stable (Grilled Cheese)
 - add start_nightscout.sh instead of my.env

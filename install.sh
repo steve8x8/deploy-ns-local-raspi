@@ -3,7 +3,7 @@
 WHAT="${1:-nothing}"
 NSHOME=~/ns
 # FIXME: make this configurable
-NSFQDN=ns.localdomain
+NSFQDN=$(hostname -f)
 NSPORT=1337
 NSUSER=nightscout
 NSPASS=WeAreNotWaiting
@@ -239,7 +239,7 @@ fi
 
 if [ "${WHAT}" = "cert" ]
 then
-    NSFQDN=${2:-ns.localdomain}
+    NSFQDN=${2:-$(hostname -f)}
     echo =========================================
     echo === INSTALL HTTPS CERTIFICATE         === \"${NSFQDN}\"
     echo =========================================
