@@ -209,9 +209,9 @@ then
 	# start at boot
 	sudo cp -p ${NSHOME}/nightscout.service /etc/systemd/system/
 	sudo systemctl daemon-reload
-	systemctl enable nightscout
-	systemctl start  nightscout
-	systemctl status nightscout
+	sudo systemctl enable nightscout
+	sudo systemctl start  nightscout
+	sudo systemctl status nightscout
     else
 	echo "Not starting Nightscout now."
     fi
