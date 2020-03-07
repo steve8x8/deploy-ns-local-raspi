@@ -54,10 +54,13 @@ mkdir -p ${NSHOME}
 
 time1=$(date +%s)
 
-# make me current
-sudo apt-get update -qq && \
-sudo apt-get upgrade -y -q && \
-sudo apt-get install git ed ${EXTRAS} -y -q
+if [ "${WHAT}" = "prepare" -o "${WHAT}" = "init" ]
+then
+    # make me current
+    sudo apt-get update -qq && \
+    sudo apt-get upgrade -y -q && \
+    sudo apt-get install git ed ${EXTRAS} -y -q
+fi
 
 if [ "${WHAT}" = "mongo" -o "${WHAT}" = "mongodb" ]
 then
@@ -123,7 +126,7 @@ q
 EOF
 fi
 
-if [ "${WHAT}" = "restore" ]
+if [ "${WHAT}" = "restore" -o "${WHAT}" = "import" ]
 then
     echo =========================================
     echo === RESTORE NIGHTSCOUT DATABASE       ===
@@ -139,6 +142,7 @@ then
 	tar tvvof ${BACKUP}
 	read -p "Is this OK? [Y/n] " x
 	case $x in
+	    "")    OK=1;;
 	    [Yy]*) OK=1;;
 	    *)     OK=0;;
 	esac
@@ -148,14 +152,17 @@ then
 	    TEMP=$(mktemp -d ${NSHOME}/untarXXXXXX)
 	    echo Using ${TEMP} to unpack tar
 	    pushd ${TEMP}
-	    tar xvf ${NSHOME}/${BACKUP}
+	    tar xf ${NSHOME}/${BACKUP}
+	    # get all files in top dir
 	    find . -type f \
 	    | while read f
 	    do
 		mv $f ./
 	    done
+	    # backup the settings file
 	    cp -p my.env ${NSHOME}/backup.env
 	    popd
+	    # restore all data
 	    #mongorestore -d nightscout ${TEMP}/
 	    mongorestore -u ${NSUSER} -p ${NSPASS} -d nightscout ${TEMP}/
 	    rm -rf ${TEMP}
@@ -166,7 +173,7 @@ then
     popd
 fi
 
-if [ "${WHAT}" = "setup" ]
+if [ "${WHAT}" = "setup" -o "${WHAT}" = "finish" ]
 then
     echo =========================================
     echo === SETUP / START NIGHTSCOUT INSTANCE ===
@@ -190,6 +197,7 @@ then
     ${NSHOME}/start.sh debug | sort
     read -p "Is this OK? [Y/n] " x
     case $x in
+	"")    OK=1;;
 	[Yy]*) OK=1;;
 	*)     OK=0;;
     esac
@@ -277,10 +285,11 @@ if [ "${WHAT}" = "help" ]
 then
     cat <<EOF |
 $0 help              - this list
+$0 prepare|init      - update base system
 $0 mongo|mongodb     - install MongoDB
 $0 ns|nightscout     - install NightScout (web monitor)
-$0 restore           - restore MongoDB from DB backup
-$0 setup             - finish and start NightScout installation
+$0 restore|import    - restore MongoDB from DB backup
+$0 setup|finish      - finish and start NightScout installation
 #$0 nginx             - install reverse proxy
 #$0 cert [fqdn]       - install LetsEncrypt certificate
 EOF
