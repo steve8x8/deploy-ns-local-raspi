@@ -3,15 +3,13 @@
 mycat() {
 for file in "$@"
 do
-#    echo "$file" >&2
-    cat 2>/dev/null "$file" \
+    cat 2>/dev/null `dirname $0`/"$file" \
     | grep -v '^#' \
     | sed -e 's~  *~%20~g' -e 's~"~~g'
 done
-#    echo "done" >&2
 }
 
-# start server, using
+# start server, using the following files in the _dir of the script_
 # - my.env extracted from backup (previous install)
 # - my-host.env created with host specifics (this install)
 # - my.env with overrides
@@ -24,8 +22,5 @@ else
     run="node server.js"
 fi
 env ${mod} \
- $(mycat backup.env) \
- $(mycat my-host.env) \
- $(mycat my.env) \
+ $(mycat backup.env my-host.env my.env) \
   ${run}
-# sh -c 'printenv; node server.js'
