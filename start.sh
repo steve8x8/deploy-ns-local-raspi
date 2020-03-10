@@ -4,8 +4,7 @@ mycat() {
 for file in "$@"
 do
     cat 2>/dev/null `dirname $0`/"$file" \
-    | grep -v '^#' \
-    | sed -e 's~  *~%20~g' -e 's~"~~g'
+    | grep -v '^#'
 done
 }
 
@@ -21,6 +20,9 @@ else
     mod=""
     run="node server.js"
 fi
-env ${mod} \
- $(mycat backup.env my-host.env my.env) \
-  ${run}
+
+# following the instructions in CONTRIBUTING.md:
+mycat my-backup.env my-host.env my-overrides.env my-testing.env > my.env
+npm run dev
+#mycat my-backup.env my-host.env my-overrides.env > my.prod.env
+#npm run prod

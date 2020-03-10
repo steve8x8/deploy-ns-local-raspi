@@ -1,3 +1,4 @@
 tmp/
-backup.env
+my-backup.env
+my-overrides.env
 my.env

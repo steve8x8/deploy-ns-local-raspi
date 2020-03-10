@@ -41,12 +41,13 @@ fi
 
 echo Checking memory and swap...
 TOTAL_MB=$(free 2>/dev/null | awk '{s+=$2+0}END{print (s+0)/1024}' | cut -d. -f1)
-if [ ${TOTAL_MB} -ge 2048 ]
+if [ ${TOTAL_MB} -ge 1500 ]
 then
     echo "Memory looks sufficient (${TOTAL_MB} MiB found)."
 else
-    echo "Memory not sufficient (${TOTAL_MB} MiB found). 2048 MiB or more recommended. Add swap space."
-    exit 1
+    echo "Memory not sufficient (${TOTAL_MB} MiB found). 1500 MiB or more recommended. Add swap space."
+    read -p "OK: " x
+    #exit 1
 fi
 
 # create NS home if not yet there
@@ -160,7 +161,7 @@ then
 		mv $f ./
 	    done
 	    # backup the settings file
-	    cp -p my.env ${NSHOME}/backup.env
+	    cp -p my.env ${NSHOME}/my-backup.env
 	    popd
 	    # restore all data
 	    #mongorestore -d nightscout ${TEMP}/
@@ -188,9 +189,9 @@ then
 	-e "s~XXXPASSXXX~${NSPASS}~g" \
 	${NSHOME}/my-*.env
     chmod +rx ${NSHOME}/start.sh
-    if [ -f ${NSHOME}/my.env ]
+    if [ -f ${NSHOME}/my-overrides.env ]
     then
-	echo "Will use ${NSHOME}/my.env to override some settings"
+	echo "Will use ${NSHOME}/my-overrides.env to override some settings"
     fi
     # what it would set
     echo "Running the Nightscout start script would set the following environment:"

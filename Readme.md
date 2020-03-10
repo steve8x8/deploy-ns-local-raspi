@@ -65,8 +65,9 @@ __Prerequisites:__
      * If you don't have DHCP, configure the network. (+)
 
  2.2. Virtual memory:
-     * Check with "free", you will need 2500 MB at least.
+     * Check with "free", for the installation, you will need 1500 MB at least.
      * If necessary, add a swapfile. (+)
+     * Memory usage will be lower once the software has been setup.
 
  3. Make sure your system is up to date:
    `$ sudo apt-get update -qq && sudo apt-get dist-upgrade -y`
@@ -100,7 +101,7 @@ __Usage:__
     ```
     You may place there:
     - a `*.tar` file with a recent DB backup which may contain a `my.env` file
-    - a `my.env` file to override the backup one and the automatically generated entries,
+    - a `my-overrides.env` file to override the backup one and the automatically generated entries,
     e.g. setting new values for
     ```
     HOSTNAME=ns.your_local_domain
