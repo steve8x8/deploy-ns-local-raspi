@@ -12,6 +12,7 @@ __Tested with:__
 
 __ToDo:__
 
+ * how to use external storage for MongoDB
  * reverse proxy, SSL certificate
  * more tests (RasPi 4, anyone?)
 
